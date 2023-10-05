@@ -46,6 +46,14 @@ h2 {
   background: #59a7e7;
 }
 
+.screen.focus {
+  background: #e96b6b;
+}
+
+.screen.focus:hover {
+  background: #e75959;
+}
+
 #add {
   background: #333;
   color: #0002;

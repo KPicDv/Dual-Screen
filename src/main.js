@@ -2,6 +2,8 @@ const $add = document.getElementById('add')
 const $first = document.getElementById('first')
 
 const RESIZE_COMMAND = 'resize'
+const FOCUS_COMMAND = 'focus'
+const BLUR_COMMAND = 'blur'
 
 let children = {}
 
@@ -14,7 +16,16 @@ const setSize = ($elem, width, height) => {
   $elem.style.aspectRatio = `${width} / ${height}`
 }
 
+const setFocus = ($elem) => {
+  $elem.className += ' focus'
+}
+
+const setBlur = ($elem) => {
+  $elem.className = $elem.className.replace(' focus', '')
+}
+
 setSize($first, window.innerWidth, window.innerHeight)
+setFocus($first)
 
 if (window.opener) {
   document.title = `Écran n°${num}`
@@ -29,13 +40,17 @@ if (window.opener) {
       height: window.innerHeight
     }
   })
+  channel.postMessage({
+    id,
+    command: FOCUS_COMMAND
+  })
     
   channel.onmessage = (e) => {
     console.log(e.data);
   }
 
   window.onresize = () => {
-    $first.children[0].innerHTML = `${window.innerWidth} x ${window.innerHeight}`
+    setSize($first, window.innerWidth, window.innerHeight)
     channel.postMessage({
       id,
       command: RESIZE_COMMAND,
@@ -43,6 +58,22 @@ if (window.opener) {
         width: window.innerWidth, 
         height: window.innerHeight
       }
+    })
+  }
+
+  window.onfocus = () => {
+    setFocus($first)
+    channel.postMessage({
+      id,
+      command: FOCUS_COMMAND
+    })
+  }
+  
+  window.onblur = () => {
+    setBlur($first)
+    channel.postMessage({
+      id,
+      command: BLUR_COMMAND
     })
   }
 } else {
@@ -74,13 +105,26 @@ if (window.opener) {
 
     switch (command) {
       case RESIZE_COMMAND:
-        console.log(children[id].screen);
         setSize(children[id].screen, data.width, data.height)
-        break;
+        break
+      case FOCUS_COMMAND:
+        setFocus(children[id].screen)
+        break
+      case BLUR_COMMAND:
+        setBlur(children[id].screen)
+        break
     }
   }
 
   window.onresize = () => {
     setSize($first, window.innerWidth, window.innerHeight)
+  }
+
+  window.onfocus = () => {
+    setFocus($first)
+  }
+
+  window.onblur = () => {
+    setBlur($first)
   }
 }
