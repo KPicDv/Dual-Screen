@@ -1,9 +1,13 @@
 const $add = document.getElementById('add')
+const $addContainer = document.getElementById('add-container')
 const $first = document.getElementById('first')
+const $input = document.getElementById('input')
+const $messages = document.getElementById('messages')
 
 const RESIZE_COMMAND = 'resize'
 const FOCUS_COMMAND = 'focus'
 const BLUR_COMMAND = 'blur'
+const MESSAGE_COMMAND = 'message'
 
 let children = {}
 
@@ -24,6 +28,16 @@ const setBlur = ($elem) => {
   $elem.className = $elem.className.replace(' focus', '')
 }
 
+const addMessage = (message) => {
+  const $message = document.createElement('div')
+  $message.className = 'message'
+  $message.innerHTML = message
+  $messages.append($message)
+  setTimeout(() => {
+    $message.remove()
+  }, 5000)
+}
+
 setSize($first, window.innerWidth, window.innerHeight)
 setFocus($first)
 
@@ -31,7 +45,7 @@ if (window.opener) {
   document.title = `Écran n°${num}`
   $first.children[1].innerHTML = num
 
-  $add.remove()
+  $addContainer.remove()
   channel.postMessage({
     id,
     command: RESIZE_COMMAND,
@@ -76,6 +90,18 @@ if (window.opener) {
       command: BLUR_COMMAND
     })
   }
+
+  channel.onmessage = (e) => {
+    const { id, command, data } = e.data
+
+    console.log(`[${command}]`, id, data);
+
+    switch (command) {
+      case MESSAGE_COMMAND:
+        addMessage(data.message)
+        break
+    }
+  }
 } else {
   document.title = 'Écran principal'
 
@@ -89,7 +115,7 @@ if (window.opener) {
       window: openedWindow,
       screen: $screen
     }
-    $add.before($screen)
+    $addContainer.before($screen)
   
     openedWindow.addEventListener('unload', () => {
       setTimeout(() => {
@@ -117,6 +143,9 @@ if (window.opener) {
       case BLUR_COMMAND:
         setBlur(children[id].screen)
         break
+      case MESSAGE_COMMAND:
+        addMessage(data.message)
+        break
     }
   }
 
@@ -130,5 +159,17 @@ if (window.opener) {
 
   window.onblur = () => {
     setBlur($first)
+  }
+}
+
+$input.onkeyup = (e) => {
+  if (e.code === 'Enter') {
+    channel.postMessage({
+      command: MESSAGE_COMMAND,
+      data: {
+        message: $input.value
+      }
+    })
+    $input.value = ''
   }
 }

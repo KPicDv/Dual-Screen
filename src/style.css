@@ -58,11 +58,43 @@ h2 {
   cursor: default;
 }
 
+#add-container {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
 #add.screen {
   background: #333;
   color: #0002;
+  flex: 1;
 }
 
 #add.screen:hover {
   background: #363636;
+}
+
+#messages {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  gap: 5px;
+}
+
+.message {
+  background: #333;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  color: #FFF;
+}
+
+#input {
+  background: #333;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  color: #FFF;
 }
