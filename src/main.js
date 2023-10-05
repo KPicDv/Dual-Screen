@@ -96,6 +96,10 @@ if (window.opener) {
         if (openedWindow.closed) $screen.remove()
       }, 100);
     })
+
+    $screen.onclick = () => {
+      openedWindow.focus()
+    }
   }
 
   channel.onmessage = (e) => {

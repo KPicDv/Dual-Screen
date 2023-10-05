@@ -42,7 +42,7 @@ h2 {
   left: 10px;
 }
 
-.screen:hover {
+.screen:not(#first):hover {
   background: #59a7e7;
 }
 
@@ -50,15 +50,19 @@ h2 {
   background: #e96b6b;
 }
 
-.screen.focus:hover {
+.screen.focus:not(#first):hover {
   background: #e75959;
 }
 
-#add {
+#first {
+  cursor: default;
+}
+
+#add.screen {
   background: #333;
   color: #0002;
 }
 
-#add:hover {
+#add.screen:hover {
   background: #363636;
 }
